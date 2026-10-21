@@ -1,0 +1,52 @@
+name: Build APK
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract project zip
+        run: |
+          ZIP=$(ls *.zip | sort -V | tail -n1)
+          echo "Using $ZIP"
+          mkdir -p src
+          unzip -q -o "$ZIP" -d src
+          ROOT=$(dirname "$(find src -name settings.gradle.kts | head -n1)")
+          echo "Project dir: $ROOT"
+          echo "PROJECT_DIR=$ROOT" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.9
+
+      - name: Test + assemble debug APK
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: gradle testDebugUnitTest assembleDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TopRace-debug-apk
+          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/*.apk
+
+      - name: Name release APK
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: cp "${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/app-debug.apk" "TopRace-Tracker-${{ github.ref_name }}.apk"
+
+      - name: GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: TopRace-Tracker-${{ github.ref_name }}.apk
