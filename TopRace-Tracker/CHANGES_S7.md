@@ -1,0 +1,11 @@
+# Session 7
+- Removed: balance box, Max Bet 10%, bet split, winner-odd entry, net/profit, tier-colour HUD.
+- Save needs only the winner: tap the winning car on the analysis screen (or change it on Post-Race).
+- 5 versions each rank all 5 cars with a % share: MATH, BASE (shortest odds, baseline), DATA, BLEND, RECENT.
+- W1/W2/W3/LOSE (and winner rank 1-5) worked out for every version from the one winner tap.
+- Picks page: top 3 of BLEND with confidence % and sample size.
+- HUD: 40 circles (2 x 20), coloured W1 green / W2 yellow / W3 orange / LOSE gray, from BLEND.
+- RECENT: decayed recent form (half-life 50 rounds); copies BLEND until 30 rounds exist.
+- DB v2 migration keeps existing rounds. CSV export has picks, ranks and results per version.
+- tools/analyze_toprace.py: statistical checks on an exported CSV.
+- Same package (com.toprace.tracker2) and fixed debug key: installs over S6 as an update.
