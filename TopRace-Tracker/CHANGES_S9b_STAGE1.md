@@ -33,3 +33,8 @@
 - Events include service start/stop, capture permission, virtual-display startup, OCR results, and capture/OCR failures.
 - Use **Refresh diagnostic log** after stopping the observer to inspect the latest events.
 - This log is local app diagnostic text only; it does not create or claim to save game rounds.
+
+## Fix 1
+- Replaced the ambiguous CancellableContinuation.resume callback with resumeWith(Result.success/ failure) to avoid the Kotlin coroutine overload compilation error.
+- Removed the conflicting resume import.
+- Diagnostic log entries are newline-separated.

@@ -18,7 +18,6 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.*
-import kotlinx.coroutines.resume
 import java.nio.ByteBuffer
 import java.util.Locale
 
@@ -167,6 +166,6 @@ class ScreenCaptureService : Service() {
 
 private suspend fun com.google.android.gms.tasks.Task<com.google.mlkit.vision.text.Text>.awaitText(): String =
     kotlinx.coroutines.suspendCancellableCoroutine { continuation ->
-        addOnSuccessListener { if (continuation.isActive) continuation.resume(it.text) }
+        addOnSuccessListener { if (continuation.isActive) continuation.resumeWith(Result.success(it.text)) }
         addOnFailureListener { if (continuation.isActive) continuation.resumeWith(Result.failure(it)) }
     }
